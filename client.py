@@ -327,10 +327,10 @@ class Client:
         if user == '':  # email was used to login
             # emails = get_emails('users_info.txt')
             self.sock.send('GET_EMAILS'.encode('utf-8'))
-           # print('Client sent: GET_EMAILS', flush=True)
+            # print('Client sent: GET_EMAILS', flush=True)
             emails = self.sock.recv(1024).decode('utf-8')
             emails = ast.literal_eval(emails)
-          #  print('Client received 1:', emails, flush=True)
+            # print('Client received 1:', emails, flush=True)
             if email not in emails:
                 error = 'Email is not in system.'
                 text3['text'] = error
@@ -349,7 +349,7 @@ class Client:
                     'utf-8')).hexdigest() == expected_password:  # if password entered is correct
                 print('logging in')
                 text3['text'] = 'Logging in...'
-                self.username = email # change later
+                self.username = email  # change later
                 # make function that returns user given email
                 time.sleep(1)
                 self.login_screen_e_win.withdraw()
@@ -465,7 +465,7 @@ class Client:
         self.win.configure(bg="lightgray")
 
         name_label = tkinter.Label(self.win,
-                                   text="Welcome to ______ " + self.username,
+                                   text="Welcome to GUI Chat " + self.username,
                                    bg="lightgray")
         name_label.config(font=("Arial bold", 12))
         name_label.pack(padx=20, pady=5)
@@ -514,8 +514,9 @@ class Client:
         enter_btn.pack(padx=20, pady=5)
         """
     def add_image(self):
-        img = tkinter.PhotoImage(file="5Head.png")
-        self.input_area.image_create(tkinter.END, image=img)
+        pass
+        # img = tkinter.PhotoImage(file="5Head.png")
+        # self.input_area.image_create(tkinter.END, image=img)
 
     def gui_loop(self) -> None:
         """
@@ -600,23 +601,24 @@ class Client:
         # print(self.input_area.get('1.0', 'end'))
         text = self.input_area.get('1.0', 'end')
         if text in ['\n\n', '\n', '']:  # if input area is empty
-            dummy = 1
             self.input_area.delete('1.0',
                                    'end')  # reset text box where user types messages
             return None
         curr_time = datetime.now()
-        if 0 <= curr_time.hour <= 12:  # morning
+        curr_min = str(curr_time.minute).zfill(2)
+        if 0 <= curr_time.hour <= 11:  # morning
             if curr_time.hour == 0:
                 curr_hour = curr_time.hour + 12
-                curr_min = str(curr_time.minute).zfill(2)
                 message = f"[{curr_hour}:{curr_min} AM] "
             else:
                 message = '[' + curr_time.strftime("%H:%M AM") + '] '
         else:
-            curr_hour = curr_time.hour - 12
-            curr_min = str(curr_time.minute).zfill(2)
-            message = f"[{curr_hour}:{curr_min} PM] "
-            # message = '[' + curr_time.strftime("%H:%M PM") + '] '
+            if curr_time.hour == 12:
+                message = f"[{curr_time.hour}:{curr_min} PM] "
+            else:
+                curr_hour = curr_time.hour - 12
+                message = f"[{curr_hour}:{curr_min} PM] "
+                # message = '[' + curr_time.strftime("%H:%M PM") + '] '
         message += f"{self.username}: {text}"
         message = message.rstrip('\n')  # remove two \n's
         message += '\n'  # add one
@@ -636,18 +638,9 @@ class Client:
                     message = self.sock.recv(1024).decode('utf-8')
                     # print('Client received 3:', message)
 
-               # print('here', message, flush=True)
-               # if message == 'NICK':
-               #     self.sock.send(('NICK' + self.username).encode('utf-8'))
-               #     print('sent NICK', flush=True)
-               # elif message[0:5] == 'GROUP' and '\n' not in message:
-               #     group_id = int(message[5:])
-               #     print(f'The group id is:{group_id}')
-                #    self.group_id = group_id
-                    #self.sock.send(('GROUP').encode('utf-8'))
                     msg_blue = False
                     if self.gui_done:
-                       # print(message, flush=True)
+                        # print(message, flush=True)
                         if all([x in message for x in [']', ':', '\n']]):
                             # this message is an actual msg in the gc
                             s_index = message.index(']')
